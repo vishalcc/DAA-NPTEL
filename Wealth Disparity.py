@@ -59,22 +59,13 @@ class DFS:
 
 
 g=DFS()
-#li=[x for x in range(1,int(input())+1)]
-#wealths=list(map(int,input().split(' ')))
-#parent=list(map(int,input().split(' ')))
-#for i,j in zip(li,wealths):
-#    g.add_vertex(Emp(i,j))
-#for i,j in zip(li,parent):
-#    g.add_edge(i,j)
-
-li=[x for x in range(1,5)]
-wealths=[5,10,6,12]
-parent=[2,-1,4,2]
+li=[x for x in range(1,int(input())+1)]
+wealths=list(map(int,input().split(' ')))
+parent=list(map(int,input().split(' ')))
 for i,j in zip(li,wealths):
     g.add_vertex(Emp(i,j))
 for i,j in zip(li,parent):
     g.add_edge(i,j)
 
-g.print_dsf()
 g.stacks()
 
