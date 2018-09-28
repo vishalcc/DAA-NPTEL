@@ -1,0 +1,86 @@
+class Vertex:
+    def __init__(self,name,tp):
+        self.name=name
+        self.tp=tp
+        self.stop=0
+        self.time=9999
+        self.neigh=[]
+        self.isburn=False
+        self.edgeweight={}
+    def addNeigh(self,v,weight):
+        self.neigh.append(v)
+        self.edgeweight[v]=weight
+        self.neigh.sort()
+
+
+class Siruseri:
+    vertes={}
+    def addVertex(self,name,tp):
+        self.vertes[name]=Vertex(name,tp)
+
+    def addEdge(self, u, v, weight):
+        self.vertes[v].addNeigh(u, weight)
+        self.vertes[u].addNeigh(v,weight)
+    def printSirseri(self):
+        for key,val in self.vertes.items():
+            print(key,val.neigh,'time ',val.time)
+    s,c=0,0
+    def setStartDest(self,s,d):
+        self.s=s
+        self.d=d
+    #Give Not Burn and minimun weight vertex
+    def noBurnMinimum(self):
+        m,ke=9999,0
+        for key,val in self.vertes.items():
+          if(val.isburn==False and m>val.time):
+              m=val.time
+              ke=key
+        if(ke!=0):
+            self.vertes[ke].isburn = True
+            return ke
+        else:
+            return -1
+    #return a wait time for singal
+    def waittime(self,u,v):
+        start=self.vertes[u]
+        dis=self.vertes[v]
+        a=dis.tp
+        dist=start.time+start.edgeweight[v]+start.stop
+        while(a<dist):
+            a+=dis.tp
+
+        return [a-dist,start.edgeweight[v],start.time+start.stop]
+
+    def SiruseriAlgo(self):
+        ver=self.vertes[self.s]
+        ver.isburn=True
+        ver.time=0
+        for key in ver.neigh:
+            wt,a,b=self.waittime(self.s,key)
+            self.vertes[key].time=wt+ver.time+ver.edgeweight[key]
+        vert=self.noBurnMinimum()
+        while(vert!=-1):
+            for key in self.vertes[vert].neigh:
+                wt,edgew,mytime=self.waittime(vert,key)
+                if(self.vertes[key].time>edgew+mytime):
+                    self.vertes[key].time = edgew + mytime
+                    self.vertes[key].stop=wt
+                    self.vertes[key].isburn = False
+
+            vert=self.noBurnMinimum()
+
+
+start,dest=list(map(int,input().split(' ')))
+noofvertex,noofedge=list(map(int,input().split(' ')))
+li=[int(x) for x in input().split(' ')]
+s=Siruseri()
+a=1
+for i in li:
+   s.addVertex(a,i)
+   a+=1
+for i in range(noofedge):
+    a,b,c=list(map(int,input().split(' ')))
+    s.addEdge(a,b,c)
+s.setStartDest(start,dest)
+s.SiruseriAlgo()
+print(s.vertes[dest].time)
