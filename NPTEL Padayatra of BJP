@@ -1,0 +1,64 @@
+
+class Node:
+    def __init__(self,name):
+        self.name=name
+        self.neig=[]
+        self.dist={}
+        self.d=0
+        self.burn=False
+    def addneig(self,n,d):
+        self.neig.append(n)
+        self.dist[n]=d
+class Graph:
+    head={}
+    def addname(self, n):
+        self.head[n]=Node(n)
+    def addneig(self,a,b,d):
+        self.head[a].addneig(b,d)
+        self.head[b].addneig(a, d)
+    min=9999999999999999
+    def rmove(self,source,dist):
+        for k,v in self.head.items():
+            v.burn=False
+            v.d=999999
+        self.head[source].d=0
+        self.head[source].neig.remove(dist)
+        self.head[dist].neig.remove(source)
+    def adds(self,s,d):
+        self.head[s].neig.append(d)
+        self.head[d].neig.append(s)
+    que=[]
+    def Dijastra(self,s,d):
+        self.que=[self.head[s]]
+        while(len(self.que)!=0):
+            a=self.que.pop(0)
+            a.burn=True
+            for n in a.neig:
+                if(self.head[n].burn==False and self.head[n].d>a.d+a.dist[n]):
+                    self.head[n].d=a.d+a.dist[n]
+                    self.que.append(self.head[n])
+            self.que=sorted(self.que,key=lambda x:x.d)
+        if(self.head[d]==999999):
+            return 9999999
+        else:
+            return self.head[d].d+self.head[s].dist[d]
+
+arr,a1=[],[]
+for i in range(int(input())):
+    arr.append(list(map(int,input().split(' '))))
+    a1.append(arr[-1][0])
+    a1.append(arr[-1][1])
+a1=list(set(a1))
+g=Graph()
+for i in a1:
+    g.addname(i)
+a1=[]
+for i in arr:
+    g.addneig(i[0],i[1],i[2])
+for i in arr:
+    g.rmove(i[0],i[1])
+    l=g.Dijastra(i[0],i[1])
+    if(l<g.min):
+        g.min=l
+    g.adds(i[0],i[1])
+print(g.min)
